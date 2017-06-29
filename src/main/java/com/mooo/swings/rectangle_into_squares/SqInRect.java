@@ -1,7 +1,7 @@
 package com.mooo.swings.rectangle_into_squares;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 import static java.lang.Math.min;
 
@@ -12,36 +12,24 @@ public class SqInRect {
 
     public static List<Integer> sqInRect(int lng, int wdth) {
         if (lng != wdth) {
-            return calculateSquaresizes(lng, wdth);
+            ArrayList<Integer> squareSizes = new ArrayList<>();
+            return calculateSquareSizes(lng, wdth, squareSizes);
         }
         return null;
     }
-
-
-    /**TODO: use recursion
-     * Define a single repeatable operation.
-     *
-    **/
-    private static ArrayList<Integer> calculateSquaresizes(int lng, int wdth) {
-
-        ArrayList<Integer> squareSizes = new ArrayList<>();
-
-        int surface = lng * wdth;
-        for (int squareSize = min(lng, wdth); surface > 0;) {
-            int squareSurface = squareSize * squareSize;
-
-            if (surface == 1){
-                squareSizes.add(1);
-                surface -= 1;
-            }
-            if (squareSurface < surface) {
-                squareSizes.add(squareSize);
-                surface -= squareSurface;
-            }else {
-                squareSize--;
-            }
+    
+    private static ArrayList<Integer> calculateSquareSizes(int lng, int wdth, ArrayList<Integer> squareSizes) {
+        int squareSize = min(lng, wdth);
+        if (lng == wdth) {
+            squareSizes.add(squareSize);
+            return squareSizes;
         }
-
-        return squareSizes;
+        if (lng > wdth) {
+            lng -= squareSize;
+        } else {
+            wdth -= squareSize;
+        }
+        squareSizes.add(squareSize);
+        return calculateSquareSizes(lng, wdth, squareSizes);
     }
 }
