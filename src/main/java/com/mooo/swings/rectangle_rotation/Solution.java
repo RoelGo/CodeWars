@@ -26,7 +26,6 @@ class Solution {
      *
      * I hate this kata
      *
-     *
      **/
 
     private static int calculatePoints(Shape rotatedRect) {
