@@ -4,9 +4,6 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 
-/**
- * Created by roel on 05/07/17.
- */
 class Solution {
 
     static int rectangleRotation(final int a, final int b) {
@@ -14,13 +11,14 @@ class Solution {
         AffineTransform at = AffineTransform.getRotateInstance(Math.PI / 4);
         Shape rotatedRect = at.createTransformedShape(myRect);
 
-        return countPoints(Math.max(a, b), rotatedRect);
+        return countPoints(rotatedRect);
     }
 
-    private static int countPoints(int max, Shape rotatedRect) {
+    private static int countPoints(Shape rotatedRect) {
         int points = 0;
-        for (int x = -max; x < max; x++) {
-            for (int y = -max; y < max; y++) {
+        Rectangle bounds = rotatedRect.getBounds();
+        for (int x = (int) bounds.getMinX(); x < bounds.getMaxX(); x++) {
+            for (int y = (int) bounds.getMinY(); y < bounds.getMaxY(); y++) {
                 if (rotatedRect.contains(x, y)) {
                     points++;
                 }
