@@ -15,6 +15,20 @@ class Solution {
 //        return countPoints(rotatedRect);
     }
 
+    /**
+     * How about this:
+     *
+     * Find miny round to up move to first point
+     * move up util not in there
+     * move left (-x) (might be dependant on evenness off the thing or not ugh)
+     * move up until not there
+     * rinse and repeat until left is not there then u done?
+     *
+     * I hate this kata
+     *
+     *
+     **/
+
     private static int calculatePoints(Shape rotatedRect) {
         PathIterator pathIterator = rotatedRect.getPathIterator(null);
 
