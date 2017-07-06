@@ -14,7 +14,7 @@ public class SolutionTest {
         assertEquals(23, Solution.rectangleRotation(6, 4));
         assertEquals(65, Solution.rectangleRotation(30, 2));
         assertEquals(49, Solution.rectangleRotation(8, 6));
-        System.out.println( Solution.rectangleRotation(10000, 6000));
+        System.out.println( Solution.rectangleRotation(10000, 10000));
         assertEquals(333, Solution.rectangleRotation(16, 20));
     }
 }
