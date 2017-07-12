@@ -7,7 +7,6 @@ import static java.util.Collections.singletonList;
 public class Dinglemouse {
 
     public static String[] whoEatsWho(final String zooString) {
-
         Zoo zoo = new Zoo(zooString);
         return zoo.startFoodFest();
     }
@@ -25,28 +24,20 @@ class Zoo {
     }
 
     String[] startFoodFest() {
-
-        List<String> strings = initializeStringsWithZoo();
-        foodFest(strings);
-        addFinalZooState(strings);
-
-        return listToStringArray(strings);
+        List<String> output = initializeStringsWithZoo();
+        foodFest(output);
+        addFinalZooState(output);
+        return output.toArray(new String[0]);
     }
 
     private ArrayList<String> initializeStringsWithZoo() {
         return new ArrayList<>(singletonList(zoo));
     }
 
-    private String[] listToStringArray(List<String> strings) {
-        Object[] objects = strings.toArray();
-        return Arrays.copyOf(objects, objects.length, String[].class);
-    }
-
     private void foodFest(List<String> strings) {
         for (int foodIndex = 0; foodIndex < foods.size(); foodIndex++) {
             Food[] foodToEat = getFoodToEat(foodIndex);
             Food eater = foods.get(foodIndex);
-
             String result = eater.eat(foodToEat[0], foodToEat[1]);
             if (removeEatenFood(result, foodToEat, foodIndex)) {
                 foodIndex = -1;
@@ -67,7 +58,7 @@ class Zoo {
     private boolean removeEatenFood(String result, Object[] foodToEat, int foodIndex) {
         boolean somethingGotEaten = false;
         Food whoGotEaten = whoWasEaten(result);
-        if (!whoGotEaten.equals(new Nothing())) {
+        if (!whoGotEaten.equals(new Food("nothing"))) {
             if (whoGotEaten.equals(foodToEat[0])) {
                 foods.remove(foodIndex - 1);
             } else {
@@ -80,72 +71,74 @@ class Zoo {
 
     private Food[] getFoodToEat(int foodIndex) {
         Food leftFood;
-
         Food rightFood;
         try {
             leftFood = foods.get(foodIndex - 1);
         } catch (ArrayIndexOutOfBoundsException e) {
-            leftFood = new Nothing();
+            leftFood = new Food("nothing");
         }
         try {
             rightFood = foods.get(foodIndex + 1);
         } catch (IndexOutOfBoundsException e) {
-            rightFood = new Nothing();
+            rightFood = new Food("nothing");
         }
         return new Food[]{leftFood, rightFood};
     }
 
     private Food whoWasEaten(String result) {
-        return Food.FOOD_REPOSITORY.get(result.split(" eats ")[1]);
+        return getFoodFromRepo(result.split(" eats ")[1]);
     }
 
     private List<Food> zooToFoodList(String zoo) {
         String[] foodStrings = zoo.split(",");
         List<Food> foods = new ArrayList<>();
         for (String foodString : foodStrings) {
-            Food food = Food.FOOD_REPOSITORY.get(foodString);
-            if (food == null) {
-                food = new Unknown(foodString);
-            }
-            foods.add(food);
+            foods.add(getFoodFromRepo(foodString));
         }
         return foods;
     }
+
+    private Food getFoodFromRepo(String foodString) {
+        Food food = Food.FOOD_REPOSITORY.get(foodString);
+        if (food == null){
+            return new Food(foodString);
+        }
+        return food;
+    }
 }
 
-abstract class Food {
+class Food {
 
     public final static Map<String, Food> FOOD_REPOSITORY = setupRepo();
     private String name;
-    private List<Food> diet;
+    private List<String> diet;
 
-    Food(String name, Food... diet) {
+    Food(String name, String... diet) {
         this.name = name;
         this.diet = Arrays.asList(diet);
     }
 
     private static Map<String, Food> setupRepo() {
         HashMap<String, Food> stringFoodHashMap = new HashMap<>();
-        stringFoodHashMap.put("bear", new Bear());
-        stringFoodHashMap.put("bug", new Bug());
-        stringFoodHashMap.put("chicken", new Chicken());
-        stringFoodHashMap.put("fox", new Fox());
-        stringFoodHashMap.put("giraffe", new Giraffe());
-        stringFoodHashMap.put("antelope", new Antelope());
-        stringFoodHashMap.put("lion", new Lion());
-        stringFoodHashMap.put("cow", new Cow());
-        stringFoodHashMap.put("panda", new Panda());
-        stringFoodHashMap.put("leaves", new Leaves());
-        stringFoodHashMap.put("sheep", new Sheep());
-        stringFoodHashMap.put("grass", new Grass());
-        stringFoodHashMap.put("little-fish", new LittleFish());
-        stringFoodHashMap.put("big-fish", new BigFish());
-        stringFoodHashMap.put("nothing", new Nothing());
+        stringFoodHashMap.put("bear", new Food("bear", "big-fish", "bug", "chicken", "cow", "leaves", "sheep"));
+        stringFoodHashMap.put("bug", new Food("bug", "leaves"));
+        stringFoodHashMap.put("chicken", new Food("chicken", "bug"));
+        stringFoodHashMap.put("fox", new Food("fox", "chicken", "sheep"));
+        stringFoodHashMap.put("giraffe", new Food("giraffe", "leaves"));
+        stringFoodHashMap.put("antelope", new Food("antelope", "grass"));
+        stringFoodHashMap.put("lion", new Food("lion", "antelope", "cow"));
+        stringFoodHashMap.put("cow", new Food("cow", "grass"));
+        stringFoodHashMap.put("panda", new Food("panda", "leaves"));
+        stringFoodHashMap.put("leaves", new Food("leaves"));
+        stringFoodHashMap.put("sheep", new Food("sheep", "grass"));
+        stringFoodHashMap.put("grass", new Food("grass"));
+        stringFoodHashMap.put("little-fish", new Food("little-fish"));
+        stringFoodHashMap.put("big-fish", new Food("big-fish", "little-fish"));
         return stringFoodHashMap;
     }
 
     private boolean eats(Food food) {
-        return diet.contains(food);
+        return diet.contains(food.name);
     }
 
     String eat(Food leftFood, Food rightFood) {
@@ -175,118 +168,5 @@ abstract class Food {
 
     public String getName() {
         return name;
-    }
-}
-
-class Bear extends Food {
-    Bear() {
-        super("bear", new BigFish(),
-                new Bug(),
-                new Chicken(),
-                new Cow(),
-                new Leaves(),
-                new Sheep());
-    }
-}
-
-class Bug extends Food {
-    Bug() {
-        super("bug",
-                new Leaves());
-    }
-}
-
-class Chicken extends Food {
-    Chicken() {
-        super("chicken",
-                new Bug());
-    }
-}
-
-class Fox extends Food {
-    Fox() {
-        super("fox",
-                new Chicken(),
-                new Sheep());
-    }
-}
-
-class Giraffe extends Food {
-    Giraffe() {
-        super("giraffe",
-                new Leaves());
-    }
-}
-
-class Antelope extends Food {
-    Antelope() {
-        super("antelope",
-                new Grass());
-    }
-}
-
-class Lion extends Food {
-    Lion() {
-        super("lion",
-                new Antelope(),
-                new Cow());
-    }
-}
-
-class Cow extends Food {
-    Cow() {
-        super("cow",
-                new Grass());
-    }
-}
-
-class Panda extends Food {
-    Panda() {
-        super("panda",
-                new Leaves());
-    }
-}
-
-class Leaves extends Food {
-    Leaves() {
-        super("leaves");
-    }
-}
-
-class Sheep extends Food {
-    Sheep() {
-        super("sheep",
-                new Grass());
-    }
-}
-
-class Grass extends Food {
-    Grass() {
-        super("grass");
-    }
-}
-
-class LittleFish extends Food {
-    LittleFish() {
-        super("little-fish");
-    }
-}
-
-class BigFish extends Food {
-    BigFish() {
-        super("big-fish",
-                new LittleFish());
-    }
-}
-
-class Nothing extends Food {
-    Nothing() {
-        super("nothing");
-    }
-}
-
-class Unknown extends Food {
-    Unknown(String name) {
-        super(name);
     }
 }
