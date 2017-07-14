@@ -6,7 +6,10 @@ import java.util.Arrays;
 
 import static org.junit.Assert.assertArrayEquals;
 
-public class ExampleTest {
+/**
+ * Created by roel on 14/07/17.
+ */
+public class DinglemouseTest {
 
     @Test
     public void example() {
@@ -19,7 +22,9 @@ public class ExampleTest {
                 "fox eats sheep",
                 "fox"};
         assertArrayEquals(expected, Dinglemouse.whoEatsWho(input));
-    }    @Test
+    }
+
+    @Test
     public void example3() {
         final String input = "chicken,grass,panda,cow,grass,busker,grass,banana,banana,little-fish";
         final String[] expected = {
@@ -36,5 +41,4 @@ public class ExampleTest {
 
         System.out.println(Arrays.toString(Dinglemouse.whoEatsWho(input)));
     }
-
 }
