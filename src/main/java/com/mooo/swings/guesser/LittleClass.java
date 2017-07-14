@@ -10,7 +10,8 @@ public class LittleClass {
     public static void isMySecret(String s) {
         if(s.equals(o)){
             System.out.println("Correct");
+        } else {
+            System.out.println("Try Again");
         }
-        System.out.println("Try Again");
     }
 }
